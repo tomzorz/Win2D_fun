@@ -43,19 +43,23 @@ namespace Win2d_circling
 			for (int i = 0; i <= _ringCount; i++)
 			{
 				var currentOffset = StartOffset + i*(RingPadding + RingStrokeWidth);
-				var c = new CanvasPathBuilder(sender);
-				c.BeginFigure(currentOffset, 0.0f);
-				c.AddArc(new Vector2(0.0f, 0.0f), currentOffset, currentOffset, 0.0f, (float)(Math.PI * 2));
-				c.EndFigure(CanvasFigureLoop.Open);
-				var g = CanvasGeometry.CreatePath(c);
-				var m = _pattern[_animationCounter + (_ringCount - i)];
-				_brush.Transform = Matrix3x2.CreateRotation((float) (Math.PI*2*m), _center);
-				using (args.DrawingSession.CreateLayer(_brush))
+				using (var c = new CanvasPathBuilder(sender))
 				{
-					args.DrawingSession.DrawGeometry(g, _center, Color.FromArgb(255,
-						m < 0.5 ? Convert.ToByte(Math.Floor(m*2*255)) : Convert.ToByte(Math.Floor((1.5-m)*255)),
-						m < 0.5 ? (byte)128 : Convert.ToByte(Math.Floor(m*255)),
-						255), RingStrokeWidth);
+					c.BeginFigure(currentOffset, 0.0f);
+					c.AddArc(new Vector2(0.0f, 0.0f), currentOffset, currentOffset, 0.0f, (float)(Math.PI * 2));
+					c.EndFigure(CanvasFigureLoop.Open);
+					using (var g = CanvasGeometry.CreatePath(c))
+					{
+						var m = _pattern[_animationCounter + (_ringCount - i)];
+						_brush.Transform = Matrix3x2.CreateRotation((float)(Math.PI * 2 * m), _center);
+						using (args.DrawingSession.CreateLayer(_brush))
+						{
+							args.DrawingSession.DrawGeometry(g, _center, Color.FromArgb(255,
+								m < 0.5 ? Convert.ToByte(Math.Floor(m * 2 * 255)) : Convert.ToByte(Math.Floor((1.5 - m) * 255)),
+								m < 0.5 ? (byte)128 : Convert.ToByte(Math.Floor(m * 255)),
+								255), RingStrokeWidth);
+						}
+					}
 				}
 			}
 			_animationCounter++;
@@ -76,7 +80,7 @@ namespace Win2d_circling
 			_size = (float) Math.Min(sender.Size.Height, sender.Size.Width);
 			_half = _size / 2.0f;
 			_ringCount = Convert.ToInt32(Math.Floor((_half - (StartOffset + EndOffset))/(RingPadding + RingStrokeWidth)));
-			var nudge = _size * 0.164f;
+			var nudge = _size * 0.174f;
 
 			//mask
 			var crt = new CanvasRenderTarget(sender, _size, _size, sender.Dpi);
@@ -97,8 +101,8 @@ namespace Win2d_circling
 						new Vector2(_size, _size), //right bottom
 						new Vector2(_half, _size), //center bottom
 						new Vector2(_half, _size), //center bottom
-						new Vector2(-nudge, _size), //left bottom
-						new Vector2(-nudge, 0.0f), //left top
+						new Vector2(-nudge, _size), //left bottom (nudged left)
+						new Vector2(-nudge, 0.0f), //left top (nudged left)
 					},
 					new[]
 					{
