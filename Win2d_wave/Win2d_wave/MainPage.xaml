@@ -5,9 +5,17 @@
     xmlns:local="using:Win2d_wave"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="10" Grid.Row="0">
+            <Button Content="Drop" Click="ButtonBase_OnClick" />
+        </StackPanel>
+        <xaml:CanvasAnimatedControl Grid.Row="1" CreateResources="CanvasAnimatedControl_OnCreateResources" Draw="CanvasAnimatedControl_OnDraw" ClearColor="Black" />
     </Grid>
 </Page>
